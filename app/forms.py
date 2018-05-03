@@ -1,10 +1,15 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-    TextAreaField
+    TextAreaField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length
 from app.models import User
 
+
+CATEGORIES = [('', ''), ('iron', 'Ironing'), ('drive', 'Driving'),
+              ('tick', 'Tickets')]
+SERVICE_TYPES = [('', ''), ('sup', "I want to supply a service"),
+                 ('dem', "I need to fulfill a service")]
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -59,7 +64,10 @@ class EditProfileForm(FlaskForm):
             if user is not None:
                 raise ValidationError('Please use a different username.')
 
-
 class PostForm(FlaskForm):
-    post = TextAreaField('Say something', validators=[DataRequired()])
+    supply_demand = SelectField('What do you want to do?', choices = SERVICE_TYPES, 
+                           validators=[DataRequired()], default='')
+    category = SelectField('Service category', choices = CATEGORIES, 
+                           validators=[DataRequired()], default='')
+    post = TextAreaField('Additional info', validators=[DataRequired()])
     submit = SubmitField('Submit')
