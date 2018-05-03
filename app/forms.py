@@ -8,8 +8,8 @@ from app.models import User
 
 CATEGORIES = [('', ''), ('iron', 'Ironing'), ('drive', 'Driving'),
               ('tick', 'Tickets')]
-SERVICE_TYPES = [('', ''), ('sup', "I want to supply a service"),
-                 ('dem', "I need to fulfill a service")]
+SERVICE_TYPES = [('', ''), (0, "I want to supply a service"),
+                 (1, "I need a service fulfilled")]
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -65,7 +65,7 @@ class EditProfileForm(FlaskForm):
                 raise ValidationError('Please use a different username.')
 
 class PostForm(FlaskForm):
-    supply_demand = SelectField('What do you want to do?', choices = SERVICE_TYPES, 
+    demand = SelectField('What do you want to do?', choices = SERVICE_TYPES, 
                            validators=[DataRequired()], default='')
     category = SelectField('Service category', choices = CATEGORIES, 
                            validators=[DataRequired()], default='')
