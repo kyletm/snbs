@@ -16,7 +16,10 @@ def before_request():
         db.session.commit()
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def root_page():
+    return render_template('home_page.html')
+
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -133,6 +136,11 @@ def user(username):
     return render_template('user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url)
 
+@app.route('/listing/<listing_num>')
+@login_required
+def listing(listing_num):
+    post = Post.query.filter_by(id=listing_num).first_or_404()
+    return render_template('listing.html', post=post)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
