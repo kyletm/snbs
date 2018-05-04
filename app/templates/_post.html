@@ -12,6 +12,10 @@
                 said {{ moment(post.timestamp).fromNow() }}:
                 <br>
                 {{ post.body }}
+                <br>
+                <a href="{{ url_for('listing', listing_num=post.id) }}">
+                View more
+                </a>
             </td>
         </tr>
     </table>
