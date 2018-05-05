@@ -6,12 +6,20 @@
                 </a>
             </td>
             <td>
+                {% if post.author == current_user %}
+                <a href="{{ url_for('user', username=post.author.username) }}">
+                    You
+                </a>
+                {% else %}
                 <a href="{{ url_for('user', username=post.author.username) }}">
                     {{ post.author.username }}
                 </a>
-                said {{ moment(post.timestamp).fromNow() }}:
-                <br>
-                {{ post.body }}
+                {% endif %}
+                {% if post.demand == 'dem' %}
+                asked for a {{ post.category }} service {{ moment(post.timestamp).fromNow() }}.
+                {% else %}
+                offered a {{ post.category }} service {{ moment(post.timestamp).fromNow() }}.
+                {% endif %}
                 <br>
                 <a href="{{ url_for('listing', listing_num=post.id) }}">
                 View more
