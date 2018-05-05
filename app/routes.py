@@ -20,6 +20,7 @@ def before_request():
 def home_page():
     return render_template('home_page.html')
 
+
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
