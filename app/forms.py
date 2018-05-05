@@ -5,11 +5,10 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length
 from app.models import User
 
-
-CATEGORIES = [('', ''), ('iron', 'Ironing'), ('drive', 'Driving'),
-              ('tick', 'Tickets')]
-SERVICE_TYPES = [('', ''), (0, "I want to supply a service"),
-                 (1, "I need a service fulfilled")]
+CATEGORIES = [('', 'Select a category'), ('ironing', 'Ironing'), ('driving', 'Driving'),
+              ('ticket', 'Tickets'), ('survey', 'Survey')]
+SERVICE_TYPES = [('', 'Select a choice'), ('sup', 'I want to supply a service'),
+                 ('dem', 'I need a service fulfilled')]
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -66,7 +65,7 @@ class EditProfileForm(FlaskForm):
 
 class PostForm(FlaskForm):
     demand = SelectField('What do you want to do?', choices = SERVICE_TYPES, 
-                           validators=[DataRequired()], default='')
+                         validators=[DataRequired()], default='')
     category = SelectField('Service category', choices = CATEGORIES, 
                            validators=[DataRequired()], default='')
     post = TextAreaField('Additional info', validators=[DataRequired()])
