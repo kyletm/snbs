@@ -3,13 +3,36 @@
 
 {% block app_content %}
     <h1>Hi, {{ current_user.username }}!</h1>
-    {% if form %}
-    {{ wtf.quick_form(form) }}
-    <br>
-    {% endif %}
-    {% for post in posts %}
-        {% include '_post.html' %}
-    {% endfor %}
+    <div class="container" style="">
+        <div class="page-header">
+            <h1>Services Offered</h1>
+            <button onclick="window.location.href=#" type="button" class="btn btn-success">Want to add a listing? Click Here!</button>
+        </div>
+        <div class="list-group">
+            {% for post in posts %}
+            <a href="#" class="list-group-item">
+                <h4 class="list-group-item-heading">heading</h4>
+                <p class="list-group-item-text">{{ post.demand }}</p>
+                <p class="list-group-item-text">{{ post.category }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="container" style="">
+        <div class="page-header">
+            <h1>Services Requested</h1>
+            <button onclick="window.location.href=#" type="button" class="btn btn-success">Want to add a listing? Click Here!</button>
+        </div>
+        <div class="list-group">
+            {% for post in posts %}
+            <a href="#" class="list-group-item">
+                <h4 class="list-group-item-heading">heading</h4>
+                <p class="list-group-item-text">{{ post.demand }}</p>
+                <p class="list-group-item-text">{{ post.category }}</p>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
     <nav aria-label="...">
         <ul class="pager">
             <li class="previous{% if not prev_url %} disabled{% endif %}">
@@ -19,10 +42,10 @@
             </li>
             <li class="next{% if not next_url %} disabled{% endif %}">
                 <a href="{{ next_url or '#' }}">
-                    Older posts <span aria-hidden="true">&rarr;</span>
+                    Older posts
+                    <span aria-hidden="true">&rarr;</span>
                 </a>
             </li>
         </ul>
     </nav>
 {% endblock %}
-
