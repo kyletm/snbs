@@ -1,36 +1,38 @@
 {% extends "base.html" %} 
 
 {% block app_content %}
-<div class="col-md-8 col-md-offset-2">
-<table class="table table-hover">
+<div class="col-md-8 col-md-offset-2" style="padding: 0px">
+<table class="table table-hover" style="margin: 0px">
     <tr>
-        <td width="256px">
-            <img src="{{ user.avatar(256) }}">
-        </td>
-        <td>
-            <h3>User: {{ user.username }}</h3>
-            <h3>Institution: {{user.institution }}</h3>
-            {% if user.about_me %}
-            <p>{{ user.about_me }}</p>{% endif %} {% if user.last_seen %}
-            <p>Last seen on: {{ moment(user.last_seen).format('LLL') }}</p>
-            {% endif %}
-            <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p>
-            {% if user == current_user %}
-            <p>
-                <a href="{{ url_for('edit_profile') }}">Edit your profile</a>
-            </p>
-            {% elif not current_user.is_following(user) %}
-            <p>
-                <a href="{{ url_for('follow', username=user.username) }}">Follow</a>
-            </p>
-            {% else %}
-            <p>
-                <a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a>
-            </p>
-            {% endif %}
-        </td>
+        <div class="container-fluid" >
+                <div class="row center-align">
+                    <div class="col-sm-8 col-sm-offset-2">
+                        <div class="well well-sm" style="float: none; margin: 0 auto;">
+                            <div class="row">
+                                <div class="col-sm-6 col-md-4">
+                                    <img src="{{ user.avatar(256) }}" alt="" class="img-rounded img-responsive" />
+                                </div>
+                                <div class="col-sm-6 col-md-8">
+                                    <h3 style="padding: 0px; margin: 0px;">{{ user.username }}</h3>
+                                    <small><cite title="{{ user.institution }}, USA">{{ user.institution }}, USA<i class="glyphicon glyphicon-map-marker">
+                                    </i></cite></small>
+                                    <p>
+                                        <i class="glyphicon glyphicon-envelope"></i> {{ user.email }}
+                                        <br />
+                                        {% if user.last_seen %}
+                                        {% endif %}
+                                        <i class="glyphicon glyphicon-time"></i> Last seen on: {{ moment(user.last_seen).format('LLL') }}
+                                    </p>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </tr>
 </table>
+<br> <h3 style="padding: 0px">Recent listings by {{ user.username }}</h3>
 {% for post in posts %} 
     {% include '_post.html' %} 
 {% endfor %}
