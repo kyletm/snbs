@@ -9,19 +9,25 @@ CATEGORIES = [('', 'Select a category'), ('ironing', 'Ironing'), ('driving', 'Dr
               ('ticket', 'Tickets'), ('survey', 'Survey')]
 SERVICE_TYPES = [('', 'Select a choice'), ('sup', 'I want to supply a service'),
                  ('dem', 'I need a service fulfilled')]
+POSSIBLE_INSTUTIONS = ['Carnegie Mellon University', 'New York University',
+                       'Princeton University', 'Rutgers University',
+                       'University of Alabama', 'University of Michigan']
+INSTITUTIONS = [('', 'Select an institution')] + [(inst, inst) for inst in POSSIBLE_INSTUTIONS]
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    username = StringField('Username', validators=[InputRequired()])
+    password = PasswordField('Password', validators=[InputRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    username = StringField('Username', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    institution = SelectField('Institution', validators=[InputRequired()],
+                              choices=INSTITUTIONS, default='')
+    password = PasswordField('Password', validators=[InputRequired()])
+    password2 = PasswordField('Repeat Password', validators=[InputRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -36,19 +42,19 @@ class RegistrationForm(FlaskForm):
 
 
 class ResetPasswordRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
     submit = SubmitField('Request Password Reset')
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[InputRequired()])
     password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+        'Repeat Password', validators=[InputRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
 
 
 class EditProfileForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
+    username = StringField('Username', validators=[InputRequired()])
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
     submit = SubmitField('Submit')
 
@@ -64,10 +70,10 @@ class EditProfileForm(FlaskForm):
 
 class PostForm(FlaskForm):
     demand = SelectField('What do you want to do?', choices = SERVICE_TYPES, 
-                         validators=[DataRequired()], default='')
+                         validators=[InputRequired()], default='')
     category = SelectField('Service category', choices = CATEGORIES, 
-                           validators=[DataRequired()], default='')
+                           validators=[InputRequired()], default='')
     price = FloatField('Compensation for service ($)', validators=[InputRequired()])
-    title = TextAreaField('Listing title', validators=[InputRequired(), Length(max=140)])
+    title = StringField('Listing title', validators=[InputRequired(), Length(max=140)])
     post = TextAreaField('Additional listing info', validators=[InputRequired(), Length(max=500)])
     submit = SubmitField('Submit')
