@@ -84,9 +84,12 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     demand = db.Column(db.String(3))
     category = db.Column(db.String(5))
-    body = db.Column(db.String(140))
+    price = db.Column(db.Numeric)
+    title = db.Column(db.String(140))
+    body = db.Column(db.String(500))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
