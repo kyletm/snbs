@@ -8,16 +8,15 @@
                 <div class="card">
 						<img class="card-img-top" src="{{ post.author.avatar(256) }}">
 						<div class="card-block">
-							<h4 class="card-title mt-3">Posted by {{ post.author.username }}</h4>
-							<div class="meta">
-								<a>Friends</a>
-							</div>
+							<h4 class="card-title mt-3">Posted by 
+								<a href="{{ url_for('user', username=post.author.username) }}"> {{ post.author.username }} </a>
+							</h4>
 							<div class="card-text">
-									{{ post.author.username }} is a {{ post.author.person_type }} from {{ post.author.institution }}.
+									{{ post.author.username }} is a student from {{ post.author.institution }}.
 							</div>
 						</div>
 						<div class="card-footer">
-							<small>Last updated {{ moment(post.last_updated).format('LLL') }}</small>
+							<small>Last updated {{ moment(post.last_updated).fromNow() }}.</small>
 							<button class="btn btn-secondary float-right btn-sm">show</button>
 						</div>
 				</div>
@@ -32,13 +31,6 @@
 						<span class="num">{{ post.price }}</span>
 					</span>
 				</p>
-				<!-- price-detail-wrap .// -->
-				<dl class="item-property">
-					<dt>Description</dt>
-					<dd>
-						<p>{{ post.body }}</p>
-					</dd>
-				</dl>
 				<dl class="param param-feature">
 					<dt>Category</dt>
 					{%if post.demand == 'dem'%}
@@ -46,6 +38,13 @@
 					{% else %}
 					<dd>Offering this service.</dd>
 					{% endif %}
+				</dl>
+				<!-- price-detail-wrap .// -->
+				<dl class="item-property">
+					<dt>Description</dt>
+					<dd>
+						<p>{{ post.body }}</p>
+					</dd>
 				</dl>
 				<!-- item-property-hor .// -->
 				<dl class="param param-feature">
