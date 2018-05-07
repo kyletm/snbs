@@ -27,7 +27,8 @@ def index():
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user,
-                    demand=form.demand.data, category=form.category.data)
+                    demand=form.demand.data, price=form.price.data, 
+                    title=form.title.data, category=form.category.data)
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
@@ -141,6 +142,7 @@ def user(username):
 @login_required
 def listing(listing_num):
     post = Post.query.filter_by(id=listing_num).first_or_404()
+    post.price = '${:,.2f}'.format(post.price)
     return render_template('listing.html', post=post)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
