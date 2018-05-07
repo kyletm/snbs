@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-    TextAreaField, SelectField
+    TextAreaField, SelectField, FloatField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
-    Length
+    Length, InputRequired
 from app.models import User
 
 CATEGORIES = [('', 'Select a category'), ('ironing', 'Ironing'), ('driving', 'Driving'),
@@ -21,8 +21,7 @@ class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -68,5 +67,7 @@ class PostForm(FlaskForm):
                          validators=[DataRequired()], default='')
     category = SelectField('Service category', choices = CATEGORIES, 
                            validators=[DataRequired()], default='')
-    post = TextAreaField('Additional info', validators=[DataRequired()])
+    price = FloatField('Compensation for service ($)', validators=[InputRequired()])
+    title = TextAreaField('Listing title', validators=[InputRequired(), Length(max=140)])
+    post = TextAreaField('Additional listing info', validators=[InputRequired(), Length(max=500)])
     submit = SubmitField('Submit')
