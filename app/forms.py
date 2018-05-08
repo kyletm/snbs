@@ -4,15 +4,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length, InputRequired
 from app.models import User
-
-CATEGORIES = [('', 'Select a category'), ('ironing', 'Ironing'), ('driving', 'Driving'),
-              ('ticket', 'Tickets'), ('survey', 'Survey')]
-SERVICE_TYPES = [('', 'Select a choice'), ('sup', 'I want to supply a service'),
-                 ('dem', 'I need a service fulfilled')]
-POSSIBLE_INSTUTIONS = ['Carnegie Mellon University', 'New York University',
-                       'Princeton University', 'Rutgers University',
-                       'University of Alabama', 'University of Michigan']
-INSTITUTIONS = [('', 'Select an institution')] + [(inst, inst) for inst in POSSIBLE_INSTUTIONS]
+from . import model_constants as m_c
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
@@ -25,7 +17,7 @@ class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
     email = StringField('Email', validators=[InputRequired(), Email()])
     institution = SelectField('Institution', validators=[InputRequired()],
-                              choices=INSTITUTIONS, default='')
+                              choices=m_c.INSTITUTIONS_FORM, default='')
     password = PasswordField('Password', validators=[InputRequired()])
     password2 = PasswordField('Repeat Password', validators=[InputRequired(), EqualTo('password')])
     submit = SubmitField('Register')
@@ -54,26 +46,32 @@ class ResetPasswordForm(FlaskForm):
 
 
 class EditProfileForm(FlaskForm):
-    username = StringField('Username', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired()])
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
     submit = SubmitField('Submit')
 
-    def __init__(self, original_username, *args, **kwargs):
+    def __init__(self, original_email, *args, **kwargs):
         super(EditProfileForm, self).__init__(*args, **kwargs)
-        self.original_username = original_username
+        self.original_email = original_email
 
-    def validate_username(self, username):
-        if username.data != self.original_username:
-            user = User.query.filter_by(username=self.username.data).first()
+    def validate_email(self, email):
+        if email.data != self.original_email:
+            user = User.query.filter_by(email=self.email.data).first()
             if user is not None:
-                raise ValidationError('Please use a different username.')
+                raise ValidationError('Please use a different email.')
 
 class PostForm(FlaskForm):
-    demand = SelectField('What do you want to do?', choices = SERVICE_TYPES, 
+    demand = SelectField('What do you want to do?', choices = m_c.SERVICE_TYPES_FORM, 
                          validators=[InputRequired()], default='')
-    category = SelectField('Service category', choices = CATEGORIES, 
+    broad_category = SelectField('Service category', choices = m_c.BROAD_CATEGORIES_FORM, 
+                                 validators=[InputRequired()], default='')      
+    category = SelectField('Service category', choices = m_c.SERVICES_FORM, 
                            validators=[InputRequired()], default='')
     price = FloatField('Compensation for service ($)', validators=[InputRequired()])
     title = StringField('Listing title', validators=[InputRequired(), Length(max=140)])
-    post = TextAreaField('Additional listing info', validators=[InputRequired(), Length(max=500)])
+    body = TextAreaField('Additional listing info', validators=[InputRequired(), Length(max=500)])
     submit = SubmitField('Submit')
+
+class TestForm(FlaskForm):
+    department = SelectField('', choices=())
+    employee = SelectField('', choices=())

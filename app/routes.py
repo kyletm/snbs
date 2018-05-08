@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
@@ -7,6 +7,15 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models import User, Post
 from app.email import send_password_reset_email
+from . import model_constants as m_c
+
+
+def clear_tables():
+    meta = db.metadata
+    for table in reversed(meta.sorted_tables):
+        print('Clear table %s' % table)
+        db.session.execute(table.delete())
+    db.session.commit()
 
 
 @app.before_request
@@ -14,6 +23,14 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+
+
+@app.route('/get_item_type/<item_category>')
+def get_item_type(item_category):
+    if item_category not in m_c.HIERARCHICAL_CATEGORIES:                                                                 
+        return jsonify([])
+    else:                                                                                    
+        return jsonify(m_c.HIERARCHICAL_CATEGORIES[item_category])
 
 
 @app.route('/')
@@ -25,14 +42,21 @@ def home_page():
 @login_required
 def index():
     form = PostForm()
+    print('HELLO')
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user,
+        post = Post(body=form.body.data, author=current_user,
                     demand=form.demand.data, price=form.price.data, 
-                    title=form.title.data, category=form.category.data)
+                    title=form.title.data, category=form.category.data,
+                    broad_category=form.broad_category.data)
+        print(post)
+        print(vars(post))
+        print('HELLO')
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
+    if form.errors:
+        print(form.errors)
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
         page, app.config['POSTS_PER_PAGE'], False)
@@ -139,25 +163,26 @@ def user(username):
     return render_template('user.html', user=user, posts=posts.items,
                            next_url=next_url, prev_url=prev_url)
 
+
 @app.route('/listing/<listing_num>')
 @login_required
 def listing(listing_num):
     post = Post.query.filter_by(id=listing_num).first_or_404()
-    post.price = '${:,.2f}'.format(post.price)
     return render_template('listing.html', post=post)
+
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm(current_user.username)
+    form = EditProfileForm(current_user.email)
     if form.validate_on_submit():
-        current_user.username = form.username.data
+        current_user.email = form.email.data
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
         return redirect(url_for('edit_profile'))
     elif request.method == 'GET':
-        form.username.data = current_user.username
+        form.email.data = current_user.email
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile',
                            form=form)

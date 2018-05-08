@@ -84,7 +84,8 @@ def load_user(id):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     demand = db.Column(db.String(3))
-    category = db.Column(db.String(5))
+    broad_category = db.Column(db.String(8))
+    category = db.Column(db.String(20))
     price = db.Column(db.Numeric)
     title = db.Column(db.String(140))
     body = db.Column(db.String(500))

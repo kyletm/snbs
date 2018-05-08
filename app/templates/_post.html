@@ -11,9 +11,9 @@
                 </a>
                 {% endif %}
                 {% if post.demand == 'dem' %}
-                asked for a {{ post.category }} service {{ moment(post.timestamp).fromNow() }}.
+                requested a {{ post.category }} {{ post.broad_category }} {{ moment(post.timestamp).fromNow() }}.
                 {% else %}
-                offered a {{ post.category }} service {{ moment(post.timestamp).fromNow() }}.
+                offered a {{ post.category }} {{ post.broad_category }} {{ moment(post.timestamp).fromNow() }}.
                 {% endif %}
                 <br>
                 <a href="{{ url_for('listing', listing_num=post.id) }}">
