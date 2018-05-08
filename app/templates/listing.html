@@ -4,11 +4,11 @@
 
 <div class="card">
 	<div class="row">
-		<aside class="col-sm-4 col-md-4 col-lg-3 mt-4 border-right">
-                <div class="card">
+		<aside class="col-sm-4 col-md-4 col-lg-3 border-right">
+                <div class="card" style="padding: 5px;">
 						<img class="card-img-top" src="{{ post.author.avatar(256) }}">
 						<div class="card-block">
-							<h4 class="card-title mt-3">Posted by 
+							<h4 class="card-title mt-3" style="margin: 10px auto;">Posted by 
 								<a href="{{ url_for('user', username=post.author.username) }}"> {{ post.author.username }} </a>
 							</h4>
 							<div class="card-text">
@@ -17,7 +17,9 @@
 						</div>
 						<div class="card-footer">
 							<small>Last updated {{ moment(post.last_updated).fromNow() }}.</small>
-							<button class="btn btn-secondary float-right btn-sm">show</button>
+							{% if post.author == current_user %}
+							<button class="btn btn-secondary float-right btn-sm">Edit</button>
+							{% endif %}
 						</div>
 				</div>
 		</aside>
@@ -27,8 +29,7 @@
 
 				<p class="price-detail-wrap">
 					<span class="price h3 text-warning">
-						<span class="currency">US $</span>
-						<span class="num">{{ post.price }}</span>
+						<span class="currency-num">{{ "${:,.2f}".format(post.price) }}</span>
 					</span>
 				</p>
 				<dl class="param param-feature">
@@ -60,8 +61,6 @@
 				<!-- row.// -->
 				<hr>
 				<a href="#" class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
-				<a href="#" class="btn btn-lg btn-outline-primary text-uppercase">
-					<i class="fas fa-shopping-cart"></i> Add to cart </a>
 			</article>
 			<!-- card-body.// -->
 		</aside>

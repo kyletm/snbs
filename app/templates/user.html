@@ -16,12 +16,12 @@
                                     <h3 style="padding: 0px; margin: 0px;">{{ user.username }}</h3>
                                     <small><cite title="{{ user.institution }}, USA">{{ user.institution }}, USA<i class="glyphicon glyphicon-map-marker">
                                     </i></cite></small>
-                                    <p>
+                                    <p style="padding: 0px; margin: 0px;">
                                         <i class="glyphicon glyphicon-envelope"></i> {{ user.email }}
-                                        <br />
                                         {% if user.last_seen %}
-                                        {% endif %}
+                                        <br/>
                                         <i class="glyphicon glyphicon-time"></i> Last seen on: {{ moment(user.last_seen).format('LLL') }}
+                                        {% endif %}
                                     </p>
 
                                 </div>
@@ -29,7 +29,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+        </div>
     </tr>
 </table>
 <br> <h3 style="padding: 0px">Recent listings by {{ user.username }}</h3>
