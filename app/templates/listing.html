@@ -49,15 +49,19 @@
 				</dl>
 				<!-- item-property-hor .// -->
 				<dl class="param param-feature">
-					<dt>Color</dt>
-					<dd>Black and white</dd>
+					<dt>Location</dt>
+					<dd>{{ post.author.institution }}</dd>
 				</dl>
 				<!-- item-property-hor .// -->
 				<dl class="param param-feature">
-					<dt>Delivery</dt>
-					<dd>Russia, USA, and Europe</dd>
+						<dt>Posted</dt>
+						<dd> {{ moment(post.timestamp ).format('LLL') }}</dd>
 				</dl>
 				<!-- item-property-hor .// -->
+				<dl class="param param-feature">
+						<dt>Status</dt>
+						<dd>Open</dd>
+				</dl>
 				<!-- row.// -->
 				<hr>
 				<a href="#" class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
