@@ -10,23 +10,24 @@
             {% for post in posts %}
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
                     <span class="thumbnail">
-                          <img src="{{ post.author.avatar(256) }}" alt="..." style="height:75px; width:auto;">
-                          <h4>{{ post.title }}</h4>
-                          <div class="ratings">
-                            <span class="glyphicon glyphicon-star"></span>
-                            <span class="glyphicon glyphicon-star"></span>
-                            <span class="glyphicon glyphicon-star"></span>
-                            <span class="glyphicon glyphicon-star"></span>
-                            <span class="glyphicon glyphicon-star-empty"></span>
-                        </div>
-                          <p>{{ post.body }} </p>
+                            <h4 style="padding: 5px; margin: 0px auto;">
+                                    {% if post.demand == 'dem' %}
+                                        Requesting
+                                    {% else %}
+                                        Offering
+                                    {% endif %} 
+                                    {{ post.category }} {{ post.broad_category }}
+                            </h4>
+                          <img src="{{ post.author.avatar(256) }}" alt="..." style="height:75px; width:auto; padding: 10px;">
+                          <h4 style="padding: 5px; margin: 0px auto;">{{ post.title }}</h4>
+                          <p >{{ post.body }} </p>
                           <hr class="line">
                           <div class="row">
                               <div class="col-md-6 col-sm-6">
                                   <p class="price">{{ "${:,.2f}".format(post.price) }}</p>
                               </div>
                               <div class="col-md-6 col-sm-6">
-                               <a href="http://cookingfoodsworld.blogspot.in/" target="_blank" >	<button class="btn btn-info right" > BUY ITEM</button></a>
+                               <a href="{{ url_for('listing', listing_num=post.id) }}" target="_blank" >	<button class="btn btn-info right" > More info</button></a>
                               </div>
                               
                           </div>
@@ -36,7 +37,7 @@
         </div>
     </div>
     <div class="text center col-md-8 col-md-offset-2">
-            <button type="button" class="btn btn-danger">Want to add a listing? Click Here!</button>
+            <a href="{{ url_for('index') }}"><button type="button" class="btn btn-danger">Want to add a listing? Click Here!</button></a>
     </div>
     <nav class="col-md-8 col-md-offset-2" aria-label="...">
         <ul class="pager">
