@@ -4,12 +4,19 @@
 {% block app_content %}
     <h1>Hi, {{ current_user.username }}!</h1>
     {% if form %}
-    {{ wtf.quick_form(form) }}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
     <br>
-
     {% endif %}
     <h3>Your recent listings</h3>
-    {% for post in posts %}
-        {% include '_post.html' %}
-    {% endfor %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            {% for post in posts %}
+                {% include '_post.html' %}
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

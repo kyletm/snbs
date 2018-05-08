@@ -6,7 +6,8 @@
 
 {% block styles %}
 {{super()}}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<!-- cache busting to avoid caching .css -->
+<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}?ver={{ range(1, 100) | random}}">
 {% endblock %}
 
 {% block navbar %}
