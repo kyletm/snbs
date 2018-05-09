@@ -4,8 +4,8 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
-    ResetPasswordRequestForm, ResetPasswordForm
-from app.models import User, Post
+    ResetPasswordRequestForm, ResetPasswordForm, ReviewForm
+from app.models import User, Post, Review
 from app.email import send_password_reset_email
 from . import model_constants as m_c
 
@@ -151,6 +151,10 @@ def reset_password(token):
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
+    reviews = Review.query.filter_by(reviewee_id=user.id).all()
+    print(user)
+    print(user.id)
+    print(reviews)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('user', username=user.username, page=posts.next_num) \
@@ -158,7 +162,7 @@ def user(username):
     prev_url = url_for('user', username=user.username, page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('user.html', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+                           next_url=next_url, prev_url=prev_url, reviews=reviews)
 
 
 @app.route('/listing/<listing_num>')
@@ -226,10 +230,31 @@ def purchase_item():
     post = Post.query.filter_by(id=post_id).first()
     print(user)
     print(current_user)
-    if post.user_id == current_user:
+    if post.user_id == current_user.id:
         flash('You cannot buy your own listing!')
     else:
         post.add_purchaser(user)
         db.session.commit()
         flash('You purchase has been processed!')
     return redirect(url_for('listing', listing_num=post_id))
+
+
+@app.route('/review/<username>', methods=['GET', 'POST'])
+@login_required
+def review(username):
+    user = User.query.filter_by(username=username).first()
+    if not user.can_be_reviewed_by(current_user):
+        flash('You cannot review this user!')
+        return redirect(url_for('user', username=username))
+    post = user.posts.filter(db.and_(Post.purchased==True, Post.purchaser==current_user)).first()
+    form = ReviewForm()
+    if form.validate_on_submit():
+        review = Review(reviewer=current_user, post_id=post.id,
+                        rating=form.rating.data, body=form.body.data,
+                        reviewee_id=post.user_id)
+        post.expired = True
+        db.session.add(review)
+        db.session.commit()
+        flash('Thank you for your review!')
+        return redirect(url_for('user', username=username))
+    return render_template('review.html', title='Review', form=form)

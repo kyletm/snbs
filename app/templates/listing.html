@@ -69,12 +69,10 @@
 				<!-- row.// -->
 				<hr>
 				
+				{% if post.purchased == False %}
 				<a href="{{ url_for('purchase_item', user_id=current_user.id, post_id=post.id) }}"
-				 class="btn btn-lg btn-primary text-uppercase"
-				 {% if post.purchased == True %}
-				 disabled
-				 {% endif %}
-				 > Buy now </a>
+				 class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
+				{% endif %}
 			</article>
 			<!-- card-body.// -->
 		</aside>

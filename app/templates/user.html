@@ -23,7 +23,6 @@
                                         <i class="glyphicon glyphicon-time"></i> Last seen on: {{ moment(user.last_seen).format('LLL') }}
                                         {% endif %}
                                     </p>
-
                                 </div>
                             </div>
                         </div>
@@ -41,23 +40,12 @@
         <h3>User Reviews</h3>
     </div>
     <div class="card-body">
-        <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus
-            neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint
-            natus.</p>
-        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-        <hr>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus
-            neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint
-            natus.</p>
-        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-        <hr>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus
-            neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint
-            natus.</p>
-        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-        <hr>
-        <a href="#" class="btn btn-success">Leave a Review</a>
+        {% for review in reviews %} 
+            {% include '_review.html' %} 
+        {% endfor %}
+        {% if user.can_be_reviewed_by(current_user) %}
+        <a href="{{ url_for('review', username=user.username) }}" class="btn btn-success">Leave a Review</a>
+        {% endif %}
     </div>
 </div>
 <nav aria-label="...">

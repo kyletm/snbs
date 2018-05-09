@@ -5,6 +5,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 from app import app, db, login
+from sqlalchemy.orm import class_mapper
 
 followers = db.Table(
     'followers',
@@ -12,12 +13,9 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
-followers = db.Table(
-    'purchasers',
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
-)
-
+def attribute_names(cls):
+    return [prop.key for prop in class_mapper(cls).iterate_properties
+        if isinstance(prop, sqlalchemy.orm.ColumnProperty)]
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,7 +23,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     institution = db.Column(db.String(120))
-    posts = db.relationship('Post', backref='author', lazy='dynamic', primaryjoin='foreign(Post.user_id) == User.id')
+    posts = db.relationship('Post', backref='author', lazy='dynamic', primaryjoin='foreign(Post.user_id) == user.c.id')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     followed = db.relationship(
@@ -57,8 +55,10 @@ class User(UserMixin, db.Model):
             self.followed.remove(user)
 
     def is_following(self, user):
-        return self.followed.filter(
-            followers.c.followed_id == user.id).count() > 0
+        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
+    
+    def can_be_reviewed_by(self, user):
+        return self.posts.filter(db.and_(Post.purchaser == user, Post.expired == False)).count() > 0
 
     def followed_posts(self):
         followed = Post.query.join(
@@ -100,9 +100,10 @@ class Post(db.Model):
     institution = db.Column(db.String(140))
     purchased = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', foreign_keys=[user_id])
+    user = db.relationship('User', foreign_keys=[user_id], backref='user')
     purchased_id = db.Column(db.Integer, db.ForeignKey('user.id', use_alter=True, name='fk_purchased_user_id'), default=None)
     purchaser = db.relationship('User', foreign_keys=[purchased_id], post_update=True)
+    expired = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
@@ -112,3 +113,17 @@ class Post(db.Model):
             self.purchaser_id = user.id
             self.purchaser = user
             self.purchased = True
+
+class Review(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reviewer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    reviewer = db.relationship('User', foreign_keys=[reviewer_id])
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    reviewee_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    reviewee = db.relationship('User', foreign_keys=[reviewee_id])
+    rating = db.Column(db.String(120))
+    body = db.Column(db.String(500))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Review {}>'.format(self.body)

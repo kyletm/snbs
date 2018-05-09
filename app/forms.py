@@ -72,6 +72,9 @@ class PostForm(FlaskForm):
     body = TextAreaField('Additional listing info', validators=[InputRequired(), Length(max=500)])
     submit = SubmitField('Submit')
 
-class TestForm(FlaskForm):
-    department = SelectField('', choices=())
-    employee = SelectField('', choices=())
+class ReviewForm(FlaskForm):
+    rating = SelectField('Rate your experience out of 5 stars', choices = m_c.RATINGS_FORM, 
+                         validators=[InputRequired()], default='')
+    body = TextAreaField('Let others know about your experience', validators=[InputRequired(), Length(max=500)])
+    submit = SubmitField('Submit')
+
