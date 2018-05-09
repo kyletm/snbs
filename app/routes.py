@@ -215,3 +215,21 @@ def unfollow(username):
     db.session.commit()
     flash('You are not following {}.'.format(username))
     return redirect(url_for('user', username=username))
+
+
+@app.route('/purchase_item')
+@login_required
+def purchase_item():
+    user_id = int(request.args.get('user_id'))
+    post_id = int(request.args.get('post_id'))
+    user = User.query.filter_by(id=user_id).first()
+    post = Post.query.filter_by(id=post_id).first()
+    print(user)
+    print(current_user)
+    if post.user_id == current_user:
+        flash('You cannot buy your own listing!')
+    else:
+        post.add_purchaser(user)
+        db.session.commit()
+        flash('You purchase has been processed!')
+    return redirect(url_for('listing', listing_num=post_id))

@@ -12,6 +12,12 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+followers = db.Table(
+    'purchasers',
+    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+)
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +25,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     institution = db.Column(db.String(120))
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
+    posts = db.relationship('Post', backref='author', lazy='dynamic', primaryjoin='foreign(Post.user_id) == User.id')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     followed = db.relationship(
@@ -90,9 +96,19 @@ class Post(db.Model):
     title = db.Column(db.String(140))
     body = db.Column(db.String(500))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     last_updated = db.Column(db.DateTime, default=datetime.utcnow)
     institution = db.Column(db.String(140))
+    purchased = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', foreign_keys=[user_id])
+    purchased_id = db.Column(db.Integer, db.ForeignKey('user.id', use_alter=True, name='fk_purchased_user_id'), default=None)
+    purchaser = db.relationship('User', foreign_keys=[purchased_id], post_update=True)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+    
+    def add_purchaser(self, user):
+        if self.purchased == False:
+            self.purchaser_id = user.id
+            self.purchaser = user
+            self.purchased = True

@@ -60,11 +60,21 @@
 				<!-- item-property-hor .// -->
 				<dl class="param param-feature">
 						<dt>Status</dt>
+						{%if post.purchased == False%}
 						<dd>Open</dd>
+						{% else %}
+						<dd>Taken</dd>
+						{% endif %}
 				</dl>
 				<!-- row.// -->
 				<hr>
-				<a href="#" class="btn btn-lg btn-primary text-uppercase"> Buy now </a>
+				
+				<a href="{{ url_for('purchase_item', user_id=current_user.id, post_id=post.id) }}"
+				 class="btn btn-lg btn-primary text-uppercase"
+				 {% if post.purchased == True %}
+				 disabled
+				 {% endif %}
+				 > Buy now </a>
 			</article>
 			<!-- card-body.// -->
 		</aside>
