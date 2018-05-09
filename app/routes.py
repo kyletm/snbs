@@ -42,15 +42,12 @@ def home_page():
 @login_required
 def index():
     form = PostForm()
-    print('HELLO')
     if form.validate_on_submit():
         post = Post(body=form.body.data, author=current_user,
                     demand=form.demand.data, price=form.price.data, 
                     title=form.title.data, category=form.category.data,
-                    broad_category=form.broad_category.data)
-        print(post)
-        print(vars(post))
-        print('HELLO')
+                    broad_category=form.broad_category.data,
+                    institution=current_user.institution)
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
