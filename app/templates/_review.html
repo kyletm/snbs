@@ -1,0 +1,5 @@
+
+<span class="text-warning"> {{ review.rating|safe }} </span>
+<p>{{ review.body }}</p>
+<small class="text-muted">Posted by {{ review.reviewer.username }} on {{ moment(review.timestamp).format('LLL') }}</small>
+<hr>
