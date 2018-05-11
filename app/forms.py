@@ -65,7 +65,7 @@ class PostForm(FlaskForm):
                          validators=[InputRequired()], default='')
     broad_category = SelectField('Service category', choices = m_c.BROAD_CATEGORIES_FORM, 
                                  validators=[InputRequired()], default='')      
-    category = SelectField('Service category', choices = m_c.SERVICES_FORM, 
+    category = SelectField('Service category', choices = m_c.SERVICES_FORM + m_c.ITEMS_FORM, 
                            validators=[InputRequired()], default='')
     price = FloatField('Compensation for service ($)', validators=[InputRequired()])
     title = StringField('Listing title', validators=[InputRequired(), Length(max=140)])
